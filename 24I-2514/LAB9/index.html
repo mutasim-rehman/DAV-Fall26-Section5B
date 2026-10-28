@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAV Lab 9 — Hierarchical, Network &amp; Geospatial Visualizations</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-inner">
+      <h1>FAST School of Computing, Islamabad</h1>
+      <p class="course-title">Data Analysis and Visualization (DAV) &mdash; Lab Manual 9</p>
+      <div class="student-meta">
+        <span class="meta-tag">Student: <strong>24i-2514</strong></span>
+        <span class="meta-tag">Section: <strong>DS-5B</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content: Tasks 1 through 6 -->
+  <main class="content-container">
+
+    <!-- TASK 1 -->
+    <section class="task-card" id="task-1">
+      <div class="task-header">
+        <h2>Task 1: Course Enrollment Treemap</h2>
+        <span class="dataset-badge">Dataset: university.csv</span>
+      </div>
+      <p class="task-desc">
+        Hierarchical treemap showing course enrollments nested within academic departments. Area represents student count.
+      </p>
+      <div id="treemap-legend" class="legend-bar"></div>
+      <div class="chart-box" id="treemap-chart"></div>
+    </section>
+
+    <!-- TASK 2 -->
+    <section class="task-card" id="task-2">
+      <div class="task-header">
+        <h2>Task 2: University Structure Dendrogram</h2>
+        <span class="dataset-badge">Dataset: university.csv</span>
+      </div>
+      <p class="task-desc">
+        Horizontal cluster dendrogram showing university organization. Click any department node to collapse or expand its courses.
+      </p>
+      <div id="dendrogram-legend" class="legend-bar">
+        <span class="legend-item"><span class="legend-circle" style="background: #1f2937;"></span> Root (University)</span>
+        <span class="legend-item"><span class="legend-circle" style="background: #2563eb;"></span> Department</span>
+        <span class="legend-item"><span class="legend-circle" style="background: #059669;"></span> Course</span>
+        <span class="legend-item"><span class="legend-circle" style="background: #dc2626;"></span> Collapsed Department</span>
+      </div>
+      <div class="chart-box" id="dendrogram-chart"></div>
+    </section>
+
+    <!-- TASK 3 -->
+    <section class="task-card" id="task-3">
+      <div class="task-header">
+        <h2>Task 3: Flight Route Network</h2>
+        <span class="dataset-badge">Dataset: flights.csv</span>
+      </div>
+      <p class="task-desc">
+        Force-directed node-link diagram of weekly flights between Pakistani cities. Node radius encodes route degree, line width encodes flight frequency. Drag nodes or hover over a city to highlight connections.
+      </p>
+      <div id="network-legend" class="legend-bar">
+        <span class="legend-item"><span class="legend-circle" style="background: #0284c7; width: 14px; height: 14px;"></span> Node Radius: Route Degree (Number of Connections)</span>
+        <span class="legend-item"><span class="legend-line" style="background: #64748b; height: 3px;"></span> Link Width: Flights per Week (6 &ndash; 70)</span>
+      </div>
+      <div class="chart-box" id="network-chart"></div>
+    </section>
+
+    <!-- TASK 4 -->
+    <section class="task-card" id="task-4">
+      <div class="task-header">
+        <h2>Task 4: World Population Choropleth</h2>
+        <span class="dataset-badge">Datasets: population.csv &amp; custom.geo.json</span>
+      </div>
+      <p class="task-desc">
+        World map colored by population using a square-root sequential scale. Countries without survey data are shown in light gray. Hover over a country for details.
+      </p>
+      <div id="choropleth-legend" class="legend-bar">
+        <span>0 M</span>
+        <div class="gradient-strip" id="choro-gradient"></div>
+        <span>1,430 M</span>
+        <span class="legend-item" style="margin-left: 14px;"><span class="legend-swatch" style="background: #e2e8f0; border: 1px solid #cbd5e1;"></span> No Data</span>
+      </div>
+      <div class="chart-box" id="choropleth-chart"></div>
+    </section>
+
+    <!-- TASK 5 -->
+    <section class="task-card" id="task-5">
+      <div class="task-header">
+        <h2>Task 5: Pakistan Cities Point Map</h2>
+        <span class="dataset-badge">Datasets: pakistan_cities.csv &amp; custom.geo.json</span>
+      </div>
+      <p class="task-desc">
+        Mercator projection map centered on Pakistan. Cities are marked with semi-transparent circles whose area represents population. Only cities with population &gt; 1 Million are labeled.
+      </p>
+      <div id="pointmap-legend" class="legend-bar">
+        <span class="legend-item"><span class="legend-circle" style="background: rgba(225, 29, 72, 0.5); border-color: #be123c;"></span> Circle Area: Population (Square-root Scale)</span>
+        <span class="legend-item"><span class="label-badge">Labels: Pop &ge; 1.0M Only</span></span>
+      </div>
+      <div class="chart-box" id="pointmap-chart"></div>
+    </section>
+
+    <!-- TASK 6 -->
+    <section class="task-card" id="task-6">
+      <div class="task-header">
+        <h2>Task 6: Combined Spatial Encoding Map</h2>
+        <span class="dataset-badge">Datasets: pakistan_cities.csv &amp; flights.csv</span>
+      </div>
+      <p class="task-desc">
+        Integrated map combining cities, populations, and air corridors with four simultaneous spatial encodings. Hover over a city to highlight its routes.
+      </p>
+      <div id="combined-legend" class="legend-bar">
+        <span class="legend-item"><strong>1. Position:</strong> Lat/Lon Location</span>
+        <span class="legend-item"><strong>2. Size:</strong> Population (Circle Area)</span>
+        <span class="legend-item"><strong>3. Color:</strong>
+          <span class="legend-circle" style="background: #dc2626; margin: 0 4px;"></span> Hub (&ge;4 routes)
+          <span class="legend-circle" style="background: #0284c7; margin: 0 4px 0 8px;"></span> Non-Hub (&lt;4 routes)
+        </span>
+        <span class="legend-item"><strong>4. Line Width:</strong> Flights per Week</span>
+      </div>
+      <div class="chart-box" id="combinedmap-chart"></div>
+    </section>
+
+  </main>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p>FAST-NUCES Islamabad &bull; Data Analysis &amp; Visualization (DAV) &bull; Lab Manual 9</p>
+  </footer>
+
+  <!-- D3.js -->
+  <script src="d3.v7.min.js"></script>
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+
+</body>
+</html>

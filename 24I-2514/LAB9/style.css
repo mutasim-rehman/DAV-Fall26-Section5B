@@ -1,0 +1,420 @@
+/* ==========================================================================
+   FAST-NUCES Islamabad — Data Analysis and Visualization (DAV)
+   Lab 9: Hierarchical, Network & Geospatial Visualizations
+   Clean, plain, and straightforward academic presentation.
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.5;
+  padding: 0;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.page-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.page-header .course-title {
+  font-size: 0.95rem;
+  color: #475569;
+  margin-top: 4px;
+}
+
+.student-meta {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.meta-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+/* --------------------------------------------------------------------------
+   Main Layout & Task Cards
+   -------------------------------------------------------------------------- */
+.content-container {
+  max-width: 960px;
+  margin: 28px auto;
+  padding: 0 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.task-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.task-header h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dataset-badge {
+  font-size: 0.76rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.task-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Legends
+   -------------------------------------------------------------------------- */
+.legend-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #334155;
+  margin-bottom: 14px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.legend-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.legend-line {
+  width: 20px;
+  height: 3px;
+  display: inline-block;
+  border-radius: 1px;
+}
+
+.gradient-strip {
+  width: 140px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid #cbd5e1;
+  background: linear-gradient(to right, #ffffcc, #fed976, #feb24c, #fd8d3c, #f03b20, #bd0026);
+  margin: 0 4px;
+}
+
+.label-badge {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Chart Container & SVGs
+   -------------------------------------------------------------------------- */
+.chart-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-box svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   Chart Visual Elements (Plain & Clean)
+   -------------------------------------------------------------------------- */
+/* Treemap */
+.treemap-rect {
+  stroke: #ffffff;
+  stroke-width: 1.5px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.treemap-rect:hover {
+  opacity: 0.85;
+}
+
+.treemap-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #ffffff;
+  pointer-events: none;
+}
+
+.treemap-sublabel {
+  font-size: 9.5px;
+  fill: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+}
+
+.dept-header-rect {
+  stroke: #ffffff;
+  stroke-width: 1px;
+}
+
+.dept-header-text {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #ffffff;
+}
+
+/* Dendrogram */
+.dendro-link {
+  fill: none;
+  stroke: #cbd5e1;
+  stroke-width: 1.5px;
+}
+
+.dendro-node {
+  cursor: pointer;
+}
+
+.dendro-node circle {
+  stroke: #ffffff;
+  stroke-width: 1.5px;
+  transition: r 0.15s ease;
+}
+
+.dendro-node:hover circle {
+  r: 8px;
+}
+
+.dendro-node text {
+  font-size: 11px;
+  fill: #1e293b;
+  font-weight: 500;
+}
+
+/* Network */
+.network-link {
+  stroke: #94a3b8;
+  stroke-opacity: 0.6;
+  stroke-linecap: round;
+  transition: stroke-opacity 0.2s ease, stroke 0.2s ease;
+}
+
+.network-link.highlighted {
+  stroke: #dc2626;
+  stroke-opacity: 1;
+}
+
+.network-link.dimmed {
+  stroke-opacity: 0.08;
+}
+
+.network-node {
+  cursor: grab;
+  transition: opacity 0.2s ease;
+}
+
+.network-node:active {
+  cursor: grabbing;
+}
+
+.network-node circle {
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+
+.network-node.dimmed {
+  opacity: 0.18;
+}
+
+.network-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #1e293b;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.network-label.dimmed {
+  opacity: 0.18;
+}
+
+/* Choropleth */
+.country-polygon {
+  stroke: #ffffff;
+  stroke-width: 0.5px;
+  cursor: pointer;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+.country-polygon:hover {
+  stroke: #0f172a;
+  stroke-width: 1.5px;
+}
+
+/* Map Base */
+.map-context {
+  fill: #f1f5f9;
+  stroke: #e2e8f0;
+  stroke-width: 0.5px;
+}
+
+.pakistan-outline {
+  fill: #f8fafc;
+  stroke: #94a3b8;
+  stroke-width: 1px;
+}
+
+/* Point Map & Combined Map */
+.city-circle {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.city-circle:hover {
+  stroke-width: 2px;
+}
+
+.city-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: #0f172a;
+  pointer-events: none;
+}
+
+.flight-path {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-opacity 0.2s ease, stroke 0.2s ease;
+}
+
+.flight-path.highlighted {
+  stroke: #dc2626 !important;
+  stroke-opacity: 1 !important;
+}
+
+.flight-path.dimmed {
+  stroke-opacity: 0.08 !important;
+}
+
+.city-group.dimmed {
+  opacity: 0.18;
+}
+
+/* --------------------------------------------------------------------------
+   Simple Tooltip (No glow)
+   -------------------------------------------------------------------------- */
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip-title {
+  font-weight: 700;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 2px;
+}
+
+.tooltip-item {
+  color: #cbd5e1;
+}
+
+.tooltip-item strong {
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.page-footer {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.82rem;
+  background: #ffffff;
+}
