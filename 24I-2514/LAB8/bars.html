@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>bars.html - Task 2</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .axis text {
+      font-size: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Task 2: Country Income Comparison (bars.html)</h1>
+  <div id="chart"></div>
+
+  <script>
+    const margin = { top: 20, right: 30, bottom: 40, left: 110 };
+    const width = 800 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
+
+    const svg = d3.select("#chart")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Load gapminder.csv
+    d3.csv("dataset/gapminder.csv", d3.autoType)
+      .catch(() => d3.csv("gapminder.csv", d3.autoType))
+      .then(data => {
+        // Bar length = gdpPercap
+        const xScale = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.gdpPercap)])
+          .range([0, width]);
+
+        // Countries on the left
+        const yScale = d3.scaleBand()
+          .domain(data.map(d => d.country))
+          .range([0, height])
+          .padding(0.1);
+
+        // Axes
+        svg.append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale));
+
+        svg.append("g")
+          .call(d3.axisLeft(yScale));
+
+        // Draw one <rect> for each row. Bars start at x = 0
+        svg.selectAll("rect")
+          .data(data)
+          .join("rect")
+          .attr("x", 0)
+          .attr("y", d => yScale(d.country))
+          .attr("width", d => xScale(d.gdpPercap))
+          .attr("height", yScale.bandwidth())
+          .attr("fill", "steelblue");
+      });
+  </script>
+</body>
+</html>

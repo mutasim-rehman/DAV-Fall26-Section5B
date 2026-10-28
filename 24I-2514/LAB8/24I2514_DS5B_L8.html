@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab 8 - D3.js - 24i-2514</title>
+  <!-- D3.js v7 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 850px;
+      margin: 25px auto;
+      padding: 0 15px;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .meta {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin-top: 15px;
+      margin-bottom: 8px;
+    }
+
+    p, li {
+      font-size: 14px;
+    }
+
+    .box {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 10px 14px;
+      margin: 12px 0;
+      border-radius: 4px;
+    }
+
+    /* Controls */
+    .controls {
+      margin: 15px 0 10px 0;
+    }
+
+    button {
+      padding: 6px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #999;
+      background: #eee;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+
+    button.active {
+      background: #333;
+      color: #fff;
+      border-color: #333;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 15px;
+      font-size: 13px;
+      margin: 10px 0;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+    }
+
+    /* Chart */
+    #chart {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      background: #fff;
+    }
+
+    .axis text {
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      display: none;
+      background: #fff;
+      border: 1px solid #333;
+      padding: 6px 10px;
+      font-size: 13px;
+      pointer-events: none;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Data Analysis and Visualization &mdash; Lab Manual 8</h1>
+  <div class="meta">
+    <strong>Roll Number:</strong> 24i-2514 &nbsp;|&nbsp;
+    <strong>Section:</strong> DS-5B &nbsp;|&nbsp;
+    <strong>Topic:</strong> D3.js (Bar Charts, Scales, Transitions & Debugging)
+  </div>
+
+  <!-- LAB TASK 1 -->
+  <h2>Lab Task 1: Richest Countries (1952 vs 2007)</h2>
+
+  <!-- Step 1 -->
+  <div class="box">
+    <strong>Step 1: Predict first</strong><br>
+    <em>"Which country is the richest in 2007? Is it the same in 1952?"</em><br>
+    In 2007, <strong>Norway</strong> is the richest country (GDP per capita ~$49,357). In 1952, it was <strong>not</strong> the same: <strong>Kuwait</strong> was the richest country by a huge margin (~$108,382), while Norway was 6th (~$10,095).
+  </div>
+
+  <!-- Step 5 Buttons -->
+  <div class="controls">
+    <strong>Select Year:</strong>
+    <button id="btn-1952" onclick="switchYear(1952)">1952</button>
+    <button id="btn-2007" class="active" onclick="switchYear(2007)">2007</button>
+  </div>
+
+  <!-- Step 3 Legend -->
+  <div class="legend">
+    <strong>Continents:</strong>
+    <span class="legend-item"><span class="legend-color" style="background: #377eb8;"></span> Europe</span>
+    <span class="legend-item"><span class="legend-color" style="background: #e41a1c;"></span> Asia</span>
+    <span class="legend-item"><span class="legend-color" style="background: #4daf4a;"></span> Americas</span>
+    <span class="legend-item"><span class="legend-color" style="background: #ff7f00;"></span> Africa</span>
+    <span class="legend-item"><span class="legend-color" style="background: #984ea3;"></span> Oceania</span>
+  </div>
+
+  <!-- Chart & Tooltip -->
+  <div id="chart"></div>
+  <div id="tooltip"></div>
+
+  <!-- Step 6 -->
+  <h3>Step 6: Explain it back (one sentence each)</h3>
+  <ol>
+    <li>
+      <strong>Which line keeps only the top 10?</strong><br>
+      The line <code>.slice(0, 10)</code> keeps only the first 10 items after sorting descending with <code>.sort((a, b) => b.gdpPercap - a.gdpPercap)</code>.
+    </li>
+    <li>
+      <strong>Why do we write d => d.country inside .data(...)?</strong><br>
+      It is a key function for object constancy, so D3 connects each bar to the country name instead of the index, making the bars slide smoothly into their new positions.
+    </li>
+    <li>
+      <strong>In 1952, why do the other bars look so short?</strong><br>
+      Kuwait had an extremely high GDP per capita ($108,382), which stretched the linear scale so much that all other countries (under $15,000) look very small in comparison.
+    </li>
+  </ol>
+
+  <!-- LAB TASK 2 -->
+  <h2>Lab Task 2: Debugging bars.html</h2>
+
+  <h3>Step A: The broken chart (original code — all rows, no year filter)</h3>
+  <p>This is what the code produces when you follow the task instructions exactly as written: one &lt;rect&gt; per row, all 1,704 rows, no year filter. The bars are ~2px tall and unreadable.</p>
+  <div id="chart-broken"></div>
+
+  <h3>Step B: After fix — Top 10 richest countries in 2007</h3>
+  <p>After filtering to year 2007, sorting descending, and keeping only 10 countries, the chart is readable.</p>
+  <div id="chart-fixed"></div>
+
+  <p>The table below shows what was found using the browser developer tools when loading all 142 countries without filtering:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tab</th>
+        <th>Do this</th>
+        <th>Write down</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Console</strong></td>
+        <td>Press F12 &rarr; Console &rarr; Ctrl+R</td>
+        <td>No red error message. The JavaScript ran completely with 0 errors.</td>
+      </tr>
+      <tr>
+        <td><strong>Network</strong></td>
+        <td>Press Ctrl+R &rarr; Network tab</td>
+        <td>gapminder.csv loaded with Status 200 OK.</td>
+      </tr>
+      <tr>
+        <td><strong>Elements</strong></td>
+        <td>Expand &lt;svg&gt; &rarr; Click one &lt;rect&gt;</td>
+        <td>There are 1,704 &lt;rect&gt; elements (not 142) and each bar is only ~2.8px tall because all 12 years are stacked together.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Answer in one sentence each:</h3>
+  <ol>
+    <li>
+      <strong>How many &lt;rect&gt; did you expect? How many did you get? Why?</strong><br>
+      We expected 142 &lt;rect&gt; elements, but got 1,704 because the CSV has 12 years of data for 142 countries (142 &times; 12 = 1,704 rows) and we did not filter by year.
+    </li>
+    <li>
+      <strong>How tall is one bar? Can you read the names?</strong><br>
+      One bar is only about 2 to 3 pixels tall, and the 142 country names overlap into an unreadable black smudge.
+    </li>
+    <li>
+      <strong>After your first fix, is the chart easy to read? What would you change?</strong><br>
+      Even after filtering to a single year (142 bars), it is still too cramped to read, so we should filter to only the top 10 richest countries.
+    </li>
+    <li>
+      <strong>Now show the 10 richest countries. Is Norway in your chart? If not, what is missing?</strong><br>
+      Norway is #1 in 2007; if it was missing, filtering specifically by <code>year === 2007</code> before sorting was missing.
+    </li>
+  </ol>
+
+  <!-- D3 SCRIPT -->
+  <script>
+    // 1. Chart Dimensions
+    const margin = { top: 20, right: 60, bottom: 40, left: 110 };
+    const width = 750 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select("#chart")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // 2. Axes Groups
+    const xAxisGroup = svg.append("g")
+      .attr("transform", `translate(0, ${height})`);
+    const yAxisGroup = svg.append("g");
+
+    // X Axis Label
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + 35)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "12px")
+      .text("GDP Per Capita (USD)");
+
+    // 3. Scales
+    const xScale = d3.scaleLinear().range([0, width]);
+    const yScale = d3.scaleBand().range([0, height]).padding(0.25);
+
+    // Continent Colors (Europe, Asia, Americas, Africa, Oceania)
+    const colorScale = d3.scaleOrdinal()
+      .domain(["Europe", "Asia", "Americas", "Africa", "Oceania"])
+      .range(["#377eb8", "#e41a1c", "#4daf4a", "#ff7f00", "#984ea3"]);
+
+    const tooltip = d3.select("#tooltip");
+    let fullData = [];
+
+    // 4. Update function for a given year
+    function update(year) {
+      // Toggle button active class
+      d3.select("#btn-1952").classed("active", year === 1952);
+      d3.select("#btn-2007").classed("active", year === 2007);
+
+      // Filter by year, sort descending, keep top 10
+      const data = fullData
+        .filter(d => d.year === year)
+        .sort((a, b) => b.gdpPercap - a.gdpPercap)
+        .slice(0, 10);
+
+      // Update scales
+      xScale.domain([0, d3.max(data, d => d.gdpPercap) * 1.05]);
+      yScale.domain(data.map(d => d.country));
+
+      const t = d3.transition().duration(1000);
+
+      // Update Axes
+      xAxisGroup.transition(t).call(d3.axisBottom(xScale).ticks(6).tickFormat(d => "$" + d3.format(",.0f")(d)));
+      yAxisGroup.transition(t).call(d3.axisLeft(yScale));
+
+      // Data join with key function for object constancy
+      const bars = svg.selectAll("rect.bar")
+        .data(data, d => d.country);
+
+      // EXIT
+      bars.exit()
+        .transition(t)
+        .attr("width", 0)
+        .remove();
+
+      // ENTER
+      const barsEnter = bars.enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("y", d => yScale(d.country))
+        .attr("height", yScale.bandwidth())
+        .attr("width", 0)
+        .attr("fill", d => colorScale(d.continent));
+
+      // UPDATE + ENTER
+      barsEnter.merge(bars)
+        .transition(t)
+        .attr("y", d => yScale(d.country))
+        .attr("height", yScale.bandwidth())
+        .attr("width", d => xScale(d.gdpPercap))
+        .attr("fill", d => colorScale(d.continent));
+
+      // Tooltip Hover
+      svg.selectAll("rect.bar")
+        .on("mouseover", function(event, d) {
+          tooltip.style("display", "block")
+            .html(`<strong>${d.country}</strong> (${d.continent})<br>Income: $${d3.format(",.0f")(d.gdpPercap)}`);
+        })
+        .on("mousemove", function(event) {
+          tooltip.style("left", (event.pageX + 12) + "px")
+                 .style("top", (event.pageY - 10) + "px");
+        })
+        .on("mouseout", function() {
+          tooltip.style("display", "none");
+        });
+
+      // Bar Value Labels
+      const labels = svg.selectAll("text.label")
+        .data(data, d => d.country);
+
+      labels.exit()
+        .transition(t)
+        .attr("x", 0)
+        .remove();
+
+      const labelsEnter = labels.enter()
+        .append("text")
+        .attr("class", "label")
+        .attr("x", 0)
+        .attr("y", d => yScale(d.country) + yScale.bandwidth() / 2 + 4)
+        .attr("font-size", "11px");
+
+      labelsEnter.merge(labels)
+        .transition(t)
+        .attr("x", d => xScale(d.gdpPercap) + 5)
+        .attr("y", d => yScale(d.country) + yScale.bandwidth() / 2 + 4)
+        .text(d => "$" + d3.format(",.0f")(d.gdpPercap));
+    }
+
+    function switchYear(year) {
+      update(year);
+    }
+
+    // 5. Load Data (tries dataset/gapminder.csv first, then gapminder.csv)
+    d3.csv("dataset/gapminder.csv", d3.autoType)
+      .catch(() => d3.csv("gapminder.csv", d3.autoType))
+      .then(data => {
+        fullData = data;
+        update(2007); // Default to 2007
+
+        // ── TASK 2A: BROKEN CHART (all 1,704 rows, no year filter) ──
+        const mB = { top: 10, right: 20, bottom: 30, left: 110 };
+        const wB = 750 - mB.left - mB.right;
+        const hB = 350 - mB.top - mB.bottom;  // short on purpose to show the mess
+
+        const svgB = d3.select("#chart-broken")
+          .append("svg")
+          .attr("width", wB + mB.left + mB.right)
+          .attr("height", hB + mB.top + mB.bottom)
+          .append("g")
+          .attr("transform", `translate(${mB.left},${mB.top})`);
+
+        const xB = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.gdpPercap)])
+          .range([0, wB]);
+
+        // domain: all unique countries from the full dataset (142 countries)
+        const countries = [...new Set(data.map(d => d.country))];
+        const yB = d3.scaleBand()
+          .domain(countries)
+          .range([0, hB])
+          .padding(0.1);
+
+        svgB.append("g").attr("transform", `translate(0,${hB})`).call(d3.axisBottom(xB).ticks(4));
+        svgB.append("g").call(d3.axisLeft(yB).tickSize(0)).selectAll("text").style("font-size", "5px");
+
+        // One <rect> per row — no year filter — THIS IS THE BROKEN PART
+        svgB.selectAll("rect")
+          .data(data)
+          .join("rect")
+          .attr("x", 0)
+          .attr("y", d => yB(d.country))
+          .attr("width", d => xB(d.gdpPercap))
+          .attr("height", yB.bandwidth())
+          .attr("fill", "steelblue")
+          .attr("opacity", 0.5);
+
+        // ── TASK 2B: FIXED CHART (top 10 in 2007 only) ──
+        const mF = { top: 10, right: 60, bottom: 30, left: 110 };
+        const wF = 750 - mF.left - mF.right;
+        const hF = 300 - mF.top - mF.bottom;
+
+        const top10 = data
+          .filter(d => d.year === 2007)
+          .sort((a, b) => b.gdpPercap - a.gdpPercap)
+          .slice(0, 10);
+
+        const svgF = d3.select("#chart-fixed")
+          .append("svg")
+          .attr("width", wF + mF.left + mF.right)
+          .attr("height", hF + mF.top + mF.bottom)
+          .append("g")
+          .attr("transform", `translate(${mF.left},${mF.top})`);
+
+        const xF = d3.scaleLinear()
+          .domain([0, d3.max(top10, d => d.gdpPercap) * 1.05])
+          .range([0, wF]);
+
+        const yF = d3.scaleBand()
+          .domain(top10.map(d => d.country))
+          .range([0, hF])
+          .padding(0.25);
+
+        svgF.append("g").attr("transform", `translate(0,${hF})`).call(d3.axisBottom(xF).ticks(5).tickFormat(d => "$" + d3.format(",.0f")(d)));
+        svgF.append("g").call(d3.axisLeft(yF));
+
+        svgF.selectAll("rect")
+          .data(top10)
+          .join("rect")
+          .attr("x", 0)
+          .attr("y", d => yF(d.country))
+          .attr("width", d => xF(d.gdpPercap))
+          .attr("height", yF.bandwidth())
+          .attr("fill", d => colorScale(d.continent))
+          .on("mouseover", function(event, d) {
+            tooltip.style("display", "block")
+              .html(`<strong>${d.country}</strong> (${d.continent})<br>GDP per capita: $${d3.format(",.0f")(d.gdpPercap)}`);
+          })
+          .on("mousemove", function(event) {
+            tooltip.style("left", (event.pageX + 12) + "px")
+                   .style("top", (event.pageY - 10) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.style("display", "none");
+          });
+
+        // Value labels at end of each bar
+        svgF.selectAll("text.flabel")
+          .data(top10)
+          .join("text")
+          .attr("class", "flabel")
+          .attr("x", d => xF(d.gdpPercap) + 4)
+          .attr("y", d => yF(d.country) + yF.bandwidth() / 2 + 4)
+          .attr("font-size", "11px")
+          .text(d => "$" + d3.format(",.0f")(d.gdpPercap));
+      })
+      .catch(err => {
+        console.error("Error loading CSV:", err);
+      });
+  </script>
+
+</body>
+</html>
